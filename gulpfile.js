@@ -13,20 +13,21 @@ var config = {
 	port: 9005,
 	devBaseUrl: 'http://localhost',
 	paths: {
-		html: './src/*.html',
-		js: './src/**/*.js',
+		html: './src/*.html', //'glob' is a regex-y definition --- here, go into the src path and find anything that ends in .html
+		js: './src/**/*.js', // '**' look in subdirectories for any js
+		images: './src/images/*',
 		css: [
       		'node_modules/bootstrap/dist/css/bootstrap.min.css',
       		'node_modules/bootstrap/dist/css/bootstrap-theme.min.css'
-    	],
+    ],
 		dist: './dist',
 		mainJs: './src/main.js'
 	}
 }
 
 //Start a local development server
-gulp.task('connect', function() {
-	connect.server({
+gulp.task('connect', function() { //task defined name, then function
+	connect.server({ //define the name method 'server'
 		root: ['dist'],
 		port: config.port,
 		base: config.devBaseUrl,
@@ -34,42 +35,52 @@ gulp.task('connect', function() {
 	});
 });
 
-gulp.task('open', ['connect'], function() {
-	gulp.src('dist/index.html')
+gulp.task('open', ['connect'], function() { //name, dependency (first, run this task then...), function
+	gulp.src('dist/index.html') //use src method and .pipe() that with the 'open' object
 		.pipe(open({ uri: config.devBaseUrl + ':' + config.port + '/'}));
 });
-
+//html task
 gulp.task('html', function() {
 	gulp.src(config.paths.html)
 		.pipe(gulp.dest(config.paths.dist))
 		.pipe(connect.reload());
 });
-
+//js task
 gulp.task('js', function() {
 	browserify(config.paths.mainJs)
-		.transform(reactify)
-		.bundle()
+		.transform(reactify) //transform jsx
+		.bundle() //bundle it all into one file
 		.on('error', console.error.bind(console))
-		.pipe(source('bundle.js'))
-		.pipe(gulp.dest(config.paths.dist + '/scripts'))
+		.pipe(source('bundle.js')) //name the bundled file
+		.pipe(gulp.dest(config.paths.dist + '/scripts')) //set the destination to dist/scripts
 		.pipe(connect.reload());
 });
-
+//css task
 gulp.task('css', function() {
 	gulp.src(config.paths.css)
 		.pipe(concat('bundle.css'))
 		.pipe(gulp.dest(config.paths.dist + '/css'));
 });
-
+//images task
+gulp.task('images', function() {
+	gulp.src(config.paths.images)
+		.pipe(gulp.dest(config.paths.dist + '/images'))
+		.pipe(connect.reload());
+	//favicon
+	gulp.src('./src/favicon.ico')
+		.pipe(gulp.dest(config.paths.dist));
+});
+//linting task
 gulp.task('lint', function() {
-	return gulp.src(config.paths.js)
-		.pipe(lint({config: 'eslint.config.json'}))
+	return gulp.src(config.paths.js) //return the output
+		.pipe(lint({config: 'eslint.config.json'})) //'rules / config' file
 		.pipe(lint.format());
 });
 
 gulp.task('watch', function() {
-	gulp.watch(config.paths.html, ['html']);
+	gulp.watch(config.paths.html, ['html']); //anything changes here, rerun the 'html' task
 	gulp.watch(config.paths.js, ['js', 'lint']);
 });
 
-gulp.task('default', ['html', 'js', 'css', 'lint', 'open', 'watch']);
+//gulp.task('default', ['html', 'js', 'css', 'lint', 'open', 'watch']); //these are all the dfault tasks that run by default
+gulp.task('default', ['html', 'js', 'css', 'images', 'lint', 'open', 'watch']); //these are all the dfault tasks that run by default

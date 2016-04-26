@@ -1,7 +1,7 @@
 {
   "name": "psadmin",
   "version": "1.0.0",
-  "description": "",
+  "description": "This contains the completed environment setup that we walk through in detail in module 2 of [\"Building Applications with React and Flux\" on Pluralsight](http://www.pluralsight.com/author/cory-house).",
   "main": "index.js",
   "scripts": {
     "start": "gulp",
@@ -19,9 +19,18 @@
     "gulp-eslint": "^0.15.0",
     "gulp-open": "^1.0.0",
     "jquery": "^2.1.4",
+    "lodash": "^3.10.0",
     "react": "^0.13.3",
     "react-router": "^0.13.3",
     "reactify": "^1.1.1",
     "vinyl-source-stream": "^1.1.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mattcc82/react-flux-starter-kit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mattcc82/react-flux-starter-kit/issues"
+  },
+  "homepage": "https://github.com/mattcc82/react-flux-starter-kit#readme"
 }
